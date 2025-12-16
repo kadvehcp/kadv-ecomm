@@ -49,7 +49,7 @@ const Navbar = () => {
             <NavLink
               to={link}
               className={({ isActive }) =>
-                isActive ? "text-black" : "text-gray-500 hover:text-gray-700"
+                isActive ? "font-bold text-black" : "hover:font-bold"
               }
             >
               <span>{name}</span>
@@ -136,9 +136,7 @@ const MobileNavbar = ({ mainNavigationItems, onClose }) => {
                   to={link}
                   onClick={() => onClose(false)}
                   className={({ isActive }) =>
-                    isActive
-                      ? "text-black"
-                      : "text-gray-500 hover:text-gray-700"
+                    isActive ? "font-bold text-black" : "hover:font-bold"
                   }
                 >
                   <span>{name}</span>

@@ -1,9 +1,27 @@
 import { useContext, useState } from "react";
+import { Atom, Laptop, Sun } from "lucide-react";
 import { ShopContext } from "../context/ShopContext";
 import { assets } from "../assets/assets";
 import Title from "../components/Title";
 import ProductItem from "../components/ProductItem";
-import { Atom, Laptop, Sun } from "lucide-react";
+
+const OUR_POLICIES = [
+  {
+    PolicyIcon: Atom,
+    policyHeading: "Easy Exchange",
+    policyBody: "Lorem ipsum, dolor sit amet consectetur adipisicing elit.",
+  },
+  {
+    PolicyIcon: Laptop,
+    policyHeading: "Easy Return",
+    policyBody: "Lorem ipsum, dolor sit amet consectetur adipisicing elit.",
+  },
+  {
+    PolicyIcon: Sun,
+    policyHeading: "Customer Support",
+    policyBody: "Lorem ipsum, dolor sit amet consectetur adipisicing elit.",
+  },
+];
 
 const Home = () => {
   const { products } = useContext(ShopContext);
@@ -11,28 +29,32 @@ const Home = () => {
   const bestSellerProducts = products
     .filter((item) => item.bestseller)
     .slice(0, 10);
-  const OUR_POLICIES = [
+
+  const productSections = [
     {
-      PolicyIcon: Atom,
-      policyHeading: "Easy Exchange",
-      policyBody: "Lorem ipsum, dolor sit amet consectetur adipisicing elit.",
+      titleFirst: "LATEST",
+      titleSecond: "COLLECTION",
+      description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
+      products: latestProducts,
     },
     {
-      PolicyIcon: Laptop,
-      policyHeading: "Easy Return",
-      policyBody: "Lorem ipsum, dolor sit amet consectetur adipisicing elit.",
-    },
-    {
-      PolicyIcon: Sun,
-      policyHeading: "Customer Support",
-      policyBody: "Lorem ipsum, dolor sit amet consectetur adipisicing elit.",
+      titleFirst: "BEST",
+      titleSecond: "SELLERS",
+      description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
+      products: bestSellerProducts,
     },
   ];
   return (
     <section>
       <Hero />
-      <LatestCollection products={latestProducts} />
-      <BestSellers products={bestSellerProducts} />
+      {productSections.map(
+        ({ titleFirst, titleSecond, description, products }) => (
+          <ProductSection
+            key={`${titleFirst}-${titleSecond}`}
+            {...{ titleFirst, titleSecond, description, products }}
+          />
+        ),
+      )}
       <OurPolicy policies={OUR_POLICIES} />
       <NewsLetterBox />
     </section>
@@ -61,39 +83,13 @@ const Hero = () => {
   );
 };
 
-const LatestCollection = ({ products }) => {
+const ProductSection = ({ titleFirst, titleSecond, description, products }) => {
   return (
     <section className="my-10">
       <div className="text-center py-5 text-2xl sm:text-4xl">
-        <Title firstText="LATEST" secondText="COLLECTION" />
+        <Title firstText={titleFirst} secondText={titleSecond} />
         <p className="w-4/5 m-auto text-xs sm:text-sm md:text-base text-gray-500">
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Itaque unde
-          quae ipsa ratione possimus.
-        </p>
-      </div>
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 gap-y-5">
-        {products.map(({ _id, image, name, price }) => (
-          <ProductItem
-            key={_id}
-            id={_id}
-            image={image}
-            name={name}
-            price={price}
-          />
-        ))}
-      </div>
-    </section>
-  );
-};
-
-const BestSellers = ({ products }) => {
-  return (
-    <section className="my-10">
-      <div className="text-center py-5 text-2xl sm:text-4xl">
-        <Title firstText="BEST" secondText="SELLERS" />
-        <p className="w-4/5 m-auto text-xs sm:text-sm md:text-base text-gray-500">
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Itaque unde
-          quae ipsa ratione possimus.
+          {description}
         </p>
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 gap-y-5">
@@ -130,7 +126,7 @@ const OurPolicy = ({ policies }) => {
 const NewsLetterBox = () => {
   const [email, setEmail] = useState("");
   const onSubmitHandler = (event) => {
-    console.log(`Form Submitted Sucessfully with email id: ${email}`);
+    console.log(`Form Submitted Successfully with email id: ${email}`);
     event.preventDefault();
   };
   return (
@@ -157,6 +153,7 @@ const NewsLetterBox = () => {
         />
         <button
           type="submit"
+          disabled={!email}
           className="text-xs font-bold px-10 py-4 text-black bg-gray-400"
         >
           SUBSCRIBE

@@ -12,7 +12,12 @@ const MAIN_NAVIGATION_ITEMS = [
 const USER_MENU_ITEMS = [
   { name: "My Profile", link: "/profile" },
   { name: "Orders", link: "/orders" },
-  { name: "Logout", action: "logout" },
+  {
+    name: "Logout",
+    action: () => {
+      alert("User logged out");
+    },
+  },
 ];
 
 const Navbar = () => {
@@ -34,9 +39,11 @@ const Navbar = () => {
 
   useEffect(() => {
     if (!mobileMenuVisible) return;
-    document.body.style.overflow = "hidden";
+    document.body.style.overflow = "clip";
     return () => {
-      document.body.style.overflow = "";
+      document.body.style.removeProperty("overflow");
+      if (!document.body.getAttribute("style")?.trim())
+        document.body.removeAttribute("style");
     };
   }, [mobileMenuVisible]);
 
@@ -158,7 +165,7 @@ const UserMenu = ({ userMenuItems, onClose }) => {
       className="absolute right-0 pt-5 z-40"
     >
       <div className="flex flex-col text-sm gap-2 w-40 py-4 px-5 rounded border border-gray-400 text-gray-500 bg-white">
-        {userMenuItems.map(({ name, link }) =>
+        {userMenuItems.map(({ name, link, action }) =>
           link ? (
             <Link
               key={link}
@@ -172,8 +179,11 @@ const UserMenu = ({ userMenuItems, onClose }) => {
             <button
               type="button"
               key={name}
-              onClick={() => onClose(false)}
-              className="p-0 bg-transparent border-0 flex items-center cursor-pointer hover:text-black"
+              onClick={() => {
+                action?.();
+                onClose(false);
+              }}
+              className="p-0 bg-transparent border-0 cursor-pointer text-left hover:text-black"
             >
               {name}
             </button>

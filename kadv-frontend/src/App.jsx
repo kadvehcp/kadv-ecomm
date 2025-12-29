@@ -14,9 +14,9 @@ import Footer from "./components/Footer";
 
 const App = () => {
   return (
-    <div className="px-5 sm:px-[5vw] md:px-[7vw] lg:px-[9vw]">
+    <div className="min-h-screen flex flex-col px-5 sm:px-[5vw] md:px-[7vw] lg:px-[9vw]">
       <Navbar />
-      <main>
+      <main className="flex-1">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/collection" element={<Collection />} />

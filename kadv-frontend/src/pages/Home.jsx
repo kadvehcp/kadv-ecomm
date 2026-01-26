@@ -126,8 +126,9 @@ const OurPolicy = ({ policies }) => {
 const NewsLetterBox = () => {
   const [email, setEmail] = useState("");
   const onSubmitHandler = (event) => {
-    console.log(`Form Submitted Successfully with email id: ${email}`);
     event.preventDefault();
+    console.log(`Form Submitted Successfully with email id: ${email}`);
+    setEmail("");
   };
   return (
     <section className="text-center my-10">
@@ -146,7 +147,7 @@ const NewsLetterBox = () => {
           name="email"
           placeholder="Enter Your Email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(event) => setEmail(event.target.value)}
           autoComplete="on"
           className="w-full sm:flex-1 outline-none"
           required

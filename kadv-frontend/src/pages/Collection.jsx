@@ -7,6 +7,7 @@ import ProductItem from "../components/ProductItem";
 const Collection = () => {
   const { products } = useContext(ShopContext);
   const [showFilter, setShowFilter] = useState(false);
+  const [sortType, setSortType] = useState("Relevant");
   const [filters, setFilters] = useState({ category: [], subCategory: [] });
 
   const toggleFilter = (filterType) => (event) => {
@@ -20,26 +21,33 @@ const Collection = () => {
 
   const productFilters = [
     {
-      filterType: "CATEGORY",
-      handler: toggleFilter("category"),
-      filters: ["Men", "Women", "Kids"],
+      label: "CATEGORY",
+      key: "category",
+      options: ["Men", "Women", "Kids"],
     },
     {
-      filterType: "SUB_CATEGORY",
-      handler: toggleFilter("subCategory"),
-      filters: ["Topwear", "Bottomwear", "Winterwear"],
+      label: "SUB_CATEGORY",
+      key: "subCategory",
+      options: ["Topwear", "Bottomwear", "Winterwear"],
     },
   ];
 
+  const filteredProducts =
+    products?.filter(
+      (item) =>
+        (filters.category.length === 0 ||
+          filters.category.includes(item.category)) &&
+        (filters.subCategory.length === 0 ||
+          filters.subCategory.includes(item.subCategory)),
+    ) ?? [];
+
   const productSortOptions = ["Relevant", "Low-to-High", "High-to-Low"];
 
-  const filteredProducts = products.filter(
-    (item) =>
-      (filters.category.length === 0 ||
-        filters.category.includes(item.category)) &&
-      (filters.subCategory.length === 0 ||
-        filters.subCategory.includes(item.subCategory)),
-  );
+  const sortedProducts = [...filteredProducts].sort((a, b) => {
+    if (sortType === "Low-to-High") return a.price - b.price;
+    if (sortType === "High-to-Low") return b.price - a.price;
+    return 0;
+  });
 
   return (
     <section className="flex flex-col sm:flex-row gap-1 sm:gap-10 py-5 text-gray-700 border-t border-gray-400">
@@ -53,24 +61,23 @@ const Collection = () => {
             className={`sm:hidden ${showFilter ? "rotate-180" : ""}`}
           />
         </p>
-        {productFilters.map(({ filterType, handler, filters }) => (
+        {productFilters.map(({ label, key, options }) => (
           <div
-            key={filterType}
+            key={key}
             className={`border border-gray-400 pl-5 py-3 my-5 ${showFilter ? "" : "hidden"} sm:block`}
           >
-            <p className="mb-3 text-sm font-medium text-gray-500">
-              {filterType}
-            </p>
+            <p className="mb-3 text-sm font-medium text-gray-500">{label}</p>
 
             <div className="flex flex-col gap-2 text-sm font-light text-gray-500">
-              {filters.map((filter) => (
+              {options.map((filter) => (
                 <label key={filter} className="flex gap-2 cursor-pointer">
                   <input
                     type="checkbox"
                     name={filter}
                     id={filter}
                     value={filter}
-                    onChange={handler}
+                    checked={filters[key].includes(filter)}
+                    onChange={toggleFilter(key)}
                     className="w-3"
                   />
                   {filter}
@@ -86,6 +93,8 @@ const Collection = () => {
           <select
             name="sortProducts"
             id="sortProducts"
+            value={sortType}
+            onChange={(e) => setSortType(e.target.value)}
             className="text-sm px-2 border border-gray-400"
           >
             {productSortOptions.map((sortOption) => (
@@ -96,15 +105,21 @@ const Collection = () => {
           </select>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 gap-y-5">
-          {filteredProducts.map(({ _id, image, name, price }) => (
-            <ProductItem
-              key={_id}
-              id={_id}
-              image={image}
-              name={name}
-              price={price}
-            />
-          ))}
+          {sortedProducts.length === 0 ? (
+            <p className="col-span-full text-center text-gray-500 mt-5">
+              No products found.
+            </p>
+          ) : (
+            sortedProducts.map(({ _id, image, name, price }) => (
+              <ProductItem
+                key={_id}
+                id={_id}
+                image={image}
+                name={name}
+                price={price}
+              />
+            ))
+          )}
         </div>
       </div>
     </section>

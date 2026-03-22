@@ -7,6 +7,8 @@ const p = new Proxy(
   },
 );
 
+export const placeHolderImage = img("placeholder-image");
+
 export const products = [
   {
     _id: "aaaaa",

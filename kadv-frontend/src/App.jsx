@@ -11,12 +11,14 @@ import Profile from "./pages/Profile";
 import PlaceOrder from "./pages/PlaceOrder";
 import Orders from "./pages/Orders";
 import Footer from "./components/Footer";
+import SearchBar from "./components/SearchBar";
 
 const App = () => {
   return (
-    <div className="min-h-screen flex flex-col px-5 sm:px-[5vw] md:px-[7vw] lg:px-[9vw]">
+    <div className="min-h-screen flex flex-col px-5 sm:px-8 md:px-12 lg:px-16">
       <Navbar />
       <main className="flex-1">
+        <SearchBar />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/collection" element={<Collection />} />

@@ -29,8 +29,8 @@ const footerLinks = [
 
 const Footer = () => {
   return (
-    <footer className="py-10 border-t border-gray-400">
-      <nav className="flex flex-col sm:grid grid-cols-[3fr_1fr_1fr] gap-14 my-10 text-sm text-gray-500">
+    <footer className="my-10">
+      <nav className="flex flex-col sm:grid grid-cols-[3fr_1fr_1fr] gap-14 py-10 border-y border-gray-400 text-sm text-gray-500">
         <div>
           <Atom className="mb-5 w-10 h-10 text-gray-700" />
           <p className="w-4/5">
@@ -65,8 +65,6 @@ const Footer = () => {
           </div>
         ))}
       </nav>
-
-      <hr className="border-gray-400" />
 
       <p className="text-center text-xs text-gray-500 mt-5">
         kadv-ecomm © {new Date().getFullYear()} kadvehcp. All rights reserved.

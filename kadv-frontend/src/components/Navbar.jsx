@@ -1,6 +1,7 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useContext } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { Atom, Menu, Search, ShoppingCart, User, X } from "lucide-react";
+import { ShopContext } from "../context/ShopContext";
 
 const MAIN_NAVIGATION_ITEMS = [
   { name: "HOME", link: "/" },
@@ -21,6 +22,8 @@ const USER_MENU_ITEMS = [
 ];
 
 const Navbar = () => {
+  const { setShowSearch } = useContext(ShopContext);
+
   const [userMenuVisible, setUserMenuVisible] = useState(false);
   const [mobileMenuVisible, setMobileMenuVisible] = useState(false);
 
@@ -48,9 +51,9 @@ const Navbar = () => {
   }, [mobileMenuVisible]);
 
   return (
-    <header className="relative flex items-center justify-between py-5 font-medium z-20 text-gray-700">
+    <header className="flex items-center justify-between py-5 font-medium z-20 text-gray-700">
       <Logo Icon={Atom} heading={"kadv-ecomm"} />
-      <ul className="hidden md:flex space-x-4 items-center text-sm">
+      <ul className="hidden md:flex gap-4 items-center text-sm">
         {MAIN_NAVIGATION_ITEMS.map(({ name, link }) => (
           <li key={link}>
             <NavLink
@@ -66,21 +69,24 @@ const Navbar = () => {
       </ul>
 
       <div className="flex items-center gap-5">
-        <Search className="cursor-pointer" />
+        <Search
+          onClick={() => setShowSearch((prev) => !prev)}
+          className="cursor-pointer"
+        />
 
         <div ref={userMenuRef} className="group relative">
           <button
             onClick={() => setUserMenuVisible((visible) => !visible)}
             aria-expanded={userMenuVisible}
             aria-controls="user-dropdown-menu"
-            className="p-0 bg-transparent border-0 flex items-center cursor-pointer"
+            className="p-0 bg-transparent border-none flex items-center cursor-pointer"
           >
             <User />
           </button>
           {userMenuVisible && (
             <UserMenu
               userMenuItems={USER_MENU_ITEMS}
-              onClose={setUserMenuVisible}
+              onClose={() => setUserMenuVisible(false)}
             />
           )}
         </div>
@@ -100,7 +106,7 @@ const Navbar = () => {
       {mobileMenuVisible && (
         <MobileNavbar
           mainNavigationItems={MAIN_NAVIGATION_ITEMS}
-          onClose={setMobileMenuVisible}
+          onClose={() => setMobileMenuVisible(false)}
         />
       )}
     </header>
@@ -120,28 +126,24 @@ const Logo = ({ Icon, heading, onClick }) => {
 
 const MobileNavbar = ({ mainNavigationItems, onClose }) => {
   return (
-    <div onClick={() => onClose(false)} className="fixed inset-0 z-40">
+    <div onClick={onClose} className="fixed inset-0 z-40">
       <div className="absolute inset-0 bg-black/40" />
       <div
         onClick={(e) => e.stopPropagation()}
         className="fixed top-0 right-0 bottom-0 w-7/12 sm:w-1/2 bg-white z-50"
       >
         <nav className="flex flex-col h-full">
-          <div className="flex items-center justify-between p-5">
-            <Logo
-              Icon={Atom}
-              heading="kadv-ecomm"
-              onClick={() => onClose(false)}
-            />
-            <X onClick={() => onClose(false)} className="cursor-pointer" />
+          <div className="flex items-center justify-between p-5 sm:px-8">
+            <Logo Icon={Atom} heading="kadv-ecomm" onClick={onClose} />
+            <X onClick={onClose} className="cursor-pointer" />
           </div>
 
           <ul className="flex flex-col px-5">
             {mainNavigationItems.map(({ name, link }) => (
-              <li key={link} className="py-2 border-b">
+              <li key={link} className="py-2 border-b border-gray-400">
                 <NavLink
                   to={link}
-                  onClick={() => onClose(false)}
+                  onClick={onClose}
                   className={({ isActive }) =>
                     isActive ? "font-bold text-black" : "hover:font-bold"
                   }
@@ -170,7 +172,7 @@ const UserMenu = ({ userMenuItems, onClose }) => {
             <Link
               key={link}
               to={link}
-              onClick={() => onClose(false)}
+              onClick={onClose}
               className="cursor-pointer hover:text-black"
             >
               {name}
@@ -181,9 +183,9 @@ const UserMenu = ({ userMenuItems, onClose }) => {
               key={name}
               onClick={() => {
                 action?.();
-                onClose(false);
+                onClose();
               }}
-              className="p-0 bg-transparent border-0 cursor-pointer text-left hover:text-black"
+              className="p-0 bg-transparent border-none cursor-pointer text-left hover:text-black"
             >
               {name}
             </button>

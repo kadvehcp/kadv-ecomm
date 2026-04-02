@@ -1,11 +1,11 @@
 import { useContext, useState } from "react";
 import { ShopContext } from "../context/ShopContext";
-import { ArrowDown } from "lucide-react";
+import { ArrowDown, Search } from "lucide-react";
 import Title from "../components/Title";
 import ProductItem from "../components/ProductItem";
 
 const Collection = () => {
-  const { products } = useContext(ShopContext);
+  const { products, search, showSearch } = useContext(ShopContext);
   const [showFilter, setShowFilter] = useState(false);
   const [sortType, setSortType] = useState("Relevant");
   const [filters, setFilters] = useState({ category: [], subCategory: [] });
@@ -33,13 +33,22 @@ const Collection = () => {
   ];
 
   const filteredProducts =
-    products?.filter(
-      (item) =>
-        (filters.category.length === 0 ||
-          filters.category.includes(item.category)) &&
-        (filters.subCategory.length === 0 ||
-          filters.subCategory.includes(item.subCategory)),
-    ) ?? [];
+    products?.filter((item) => {
+      const matchCategory =
+        filters.category.length === 0 ||
+        filters.category.includes(item.category);
+      const matchSubCategory =
+        filters.subCategory.length === 0 ||
+        filters.subCategory.includes(item.subCategory);
+      const searchQuery = search.toLowerCase().trim();
+      const matchSearch =
+        !search ||
+        !showSearch ||
+        item.price.toString().includes(searchQuery) ||
+        item.name.toLowerCase().includes(searchQuery);
+
+      return matchCategory && matchSubCategory && matchSearch;
+    }) ?? [];
 
   const productSortOptions = ["Relevant", "Low-to-High", "High-to-Low"];
 

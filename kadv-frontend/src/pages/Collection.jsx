@@ -1,17 +1,17 @@
 import { useContext, useState } from "react";
 import { ShopContext } from "../context/ShopContext";
-import { ArrowDown, Search } from "lucide-react";
-import Title from "../components/Title";
-import ProductItem from "../components/ProductItem";
+import { X, ListFilter } from "lucide-react";
+import DisplayProducts from "../components/DisplayProducts";
 
 const Collection = () => {
   const { products, search, showSearch } = useContext(ShopContext);
   const [showFilter, setShowFilter] = useState(false);
   const [sortType, setSortType] = useState("Relevant");
   const [filters, setFilters] = useState({ category: [], subCategory: [] });
+  const [tempFilters, setTempFilters] = useState(filters);
 
-  const toggleFilter = (filterType) => (event) => {
-    setFilters((prev) => ({
+  const applyFilter = (filterType) => (event) => {
+    setTempFilters((prev) => ({
       ...prev,
       [filterType]: prev[filterType].includes(event.target.value)
         ? prev[filterType].filter((item) => item !== event.target.value)
@@ -26,7 +26,7 @@ const Collection = () => {
       options: ["Men", "Women", "Kids"],
     },
     {
-      label: "SUB_CATEGORY",
+      label: "SUB CATEGORY",
       key: "subCategory",
       options: ["Topwear", "Bottomwear", "Winterwear"],
     },
@@ -59,77 +59,106 @@ const Collection = () => {
   });
 
   return (
-    <section className="flex flex-col md:flex-row gap-1 sm:gap-10 py-5 text-gray-700 border-t border-gray-400">
-      <div className="w-auto my-5">
-        <p
-          onClick={() => setShowFilter((v) => !v)}
-          className="my-2 text-xl flex items-center cursor-pointer gap-2"
+    <section className="flex flex-col gap-2 py-5 text-gray-700 border-t border-gray-400">
+      <div className="flex justify-between">
+        <button
+          onClick={() => {
+            setTempFilters(filters);
+            setShowFilter(true);
+          }}
+          className="flex items-center cursor-pointer gap-4 px-3 py-2 border border-gray-400"
         >
-          FILTERS
-          <ArrowDown
-            className={`md:hidden ${showFilter ? "rotate-180" : ""}`}
-          />
-        </p>
-        {productFilters.map(({ label, key, options }) => (
+          <span className="text-sm">Filter</span>
+          <ListFilter size={16} />
+        </button>
+        {showFilter && (
           <div
-            key={key}
-            className={`border border-gray-400 p-5 py-3 my-5 ${showFilter ? "" : "hidden"} md:block`}
+            onClick={() => setShowFilter(false)}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
           >
-            <p className="mb-3 text-sm font-medium text-gray-500">{label}</p>
-
-            <div className="flex flex-col gap-2 text-sm font-light text-gray-500">
-              {options.map((filter) => (
-                <label key={filter} className="flex gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    name={filter}
-                    id={filter}
-                    value={filter}
-                    checked={filters[key].includes(filter)}
-                    onChange={toggleFilter(key)}
-                    className="w-3"
-                  />
-                  {filter}
-                </label>
+            <div
+              onClick={(e) => e.stopPropagation()}
+              className="bg-white w-[90%] max-w-sm p-4 rounded-xl shadow-lg border border-gray-400 relative"
+            >
+              <button
+                onClick={() => setShowFilter(false)}
+                className="absolute top-4 right-4 text-gray-500 text-lg cursor-pointer"
+              >
+                <X />
+              </button>
+              <h2 className="text-lg font-medium mb-4">FILTER</h2>
+              {productFilters.map(({ label, key, options }) => (
+                <div key={key} className="mb-4">
+                  <h3 className="mb-2 text-sm font-medium text-gray-500">
+                    {label}
+                  </h3>
+                  <div className="flex flex-col gap-2 mx-4 text-sm text-gray-500">
+                    {options.map((filter) => (
+                      <label
+                        htmlFor={`${key}-${filter}`}
+                        key={filter}
+                        className="flex gap-2 cursor-pointer"
+                      >
+                        <input
+                          type="checkbox"
+                          id={`${key}-${filter}`}
+                          value={filter}
+                          checked={tempFilters[key].includes(filter)}
+                          onChange={applyFilter(key)}
+                          className="w-4"
+                        />
+                        {filter}
+                      </label>
+                    ))}
+                  </div>
+                </div>
               ))}
+              <div className="flex gap-4 mt-4">
+                <button
+                  onClick={() => {
+                    setFilters(tempFilters);
+                    setShowFilter(false);
+                  }}
+                  className="flex-1 bg-gray-400 text-white py-2 font-medium"
+                >
+                  APPLY
+                </button>
+                <button
+                  onClick={() => {
+                    const resetFilters = { category: [], subCategory: [] };
+                    setTempFilters(resetFilters);
+                  }}
+                  className="flex-1 border border-gray-400 py-2 font-medium"
+                >
+                  RESET
+                </button>
+              </div>
             </div>
           </div>
-        ))}
-      </div>
-      <div className="flex-1 my-5">
-        <div className="flex justify-between text-base sm:text-2xl mb-5">
-          <Title firstText="ALL" secondText="COLLECTIONS" />
+        )}
+        <div className="flex items-center gap-4 border text-sm border-gray-400">
+          <h3 className="px-3 py-2">Sort by:</h3>
           <select
-            name="sortProducts"
-            id="sortProducts"
+            name="sortType"
+            id="sortType"
             value={sortType}
             onChange={(e) => setSortType(e.target.value)}
-            className="text-sm px-2 border border-gray-400"
+            className="px-3 py-2 border-l border-gray-400"
           >
-            {productSortOptions.map((sortOption) => (
-              <option key={sortOption} value={sortOption}>
-                Sort by: {sortOption}
+            {productSortOptions.map((option) => (
+              <option key={option} value={option}>
+                {option}
               </option>
             ))}
           </select>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 gap-y-5">
-          {sortedProducts.length === 0 ? (
-            <p className="col-span-full text-center text-gray-500 mt-5">
-              No products found.
-            </p>
-          ) : (
-            sortedProducts.map(({ _id, image, name, price }) => (
-              <ProductItem
-                key={_id}
-                id={_id}
-                image={image}
-                name={name}
-                price={price}
-              />
-            ))
-          )}
-        </div>
+      </div>
+      <div className="flex-1 my-2">
+        <DisplayProducts
+          titleFirst="ALL"
+          titleSecond="PRODUCTS"
+          products={sortedProducts}
+        />
       </div>
     </section>
   );

@@ -2,8 +2,7 @@ import { useContext, useState } from "react";
 import { Atom, Laptop, Sun } from "lucide-react";
 import { ShopContext } from "../context/ShopContext";
 import { placeHolderImage } from "../assets/assets";
-import Title from "../components/Title";
-import ProductItem from "../components/ProductItem";
+import DisplayProducts, { Title } from "../components/DisplayProducts";
 
 const OUR_POLICIES = [
   {
@@ -49,7 +48,7 @@ const Home = () => {
       <Hero />
       {productSections.map(
         ({ titleFirst, titleSecond, description, products }) => (
-          <ProductSection
+          <DisplayProducts
             key={`${titleFirst}-${titleSecond}`}
             {...{ titleFirst, titleSecond, description, products }}
           />
@@ -79,30 +78,6 @@ const Hero = () => {
         loading="lazy"
         className="w-full sm:w-1/2 h-70 sm:h-100"
       />
-    </section>
-  );
-};
-
-const ProductSection = ({ titleFirst, titleSecond, description, products }) => {
-  return (
-    <section className="my-10">
-      <div className="text-center py-5 text-2xl sm:text-4xl">
-        <Title firstText={titleFirst} secondText={titleSecond} />
-        <p className="w-4/5 m-auto text-xs sm:text-sm md:text-base text-gray-500">
-          {description}
-        </p>
-      </div>
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8 gap-y-5">
-        {products.map(({ _id, image, name, price }) => (
-          <ProductItem
-            key={_id}
-            id={_id}
-            image={image}
-            name={name}
-            price={price}
-          />
-        ))}
-      </div>
     </section>
   );
 };

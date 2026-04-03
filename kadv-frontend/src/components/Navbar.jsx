@@ -51,23 +51,24 @@ const Navbar = () => {
   }, [mobileMenuVisible]);
 
   return (
-    <header className="flex items-center justify-between py-5 font-medium z-20 text-gray-700">
+    <header className="flex items-center justify-between py-5 font-medium z-20 text-gray-500">
       <Logo Icon={Atom} heading={"kadv-ecomm"} />
-      <ul className="hidden md:flex gap-4 items-center text-sm">
-        {MAIN_NAVIGATION_ITEMS.map(({ name, link }) => (
-          <li key={link}>
-            <NavLink
-              to={link}
-              className={({ isActive }) =>
-                isActive ? "font-bold text-black" : "hover:font-bold"
-              }
-            >
-              <span>{name}</span>
-            </NavLink>
-          </li>
-        ))}
-      </ul>
-
+      <nav className="hidden md:flex">
+        <ul className="flex gap-4 items-center text-sm">
+          {MAIN_NAVIGATION_ITEMS.map(({ name, link }) => (
+            <li key={link}>
+              <NavLink
+                to={link}
+                className={({ isActive }) =>
+                  isActive ? "font-bold text-black" : "hover:text-gray-700"
+                }
+              >
+                <span>{name}</span>
+              </NavLink>
+            </li>
+          ))}
+        </ul>
+      </nav>
       <div className="flex items-center gap-5">
         <Search
           onClick={() => setShowSearch((prev) => !prev)}
@@ -145,7 +146,7 @@ const MobileNavbar = ({ mainNavigationItems, onClose }) => {
                   to={link}
                   onClick={onClose}
                   className={({ isActive }) =>
-                    isActive ? "font-bold text-black" : "hover:font-bold"
+                    isActive ? "font-bold text-black" : "hover:text-gray-700"
                   }
                 >
                   <span>{name}</span>

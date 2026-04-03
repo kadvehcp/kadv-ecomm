@@ -1,7 +1,8 @@
 import { useContext, useState } from "react";
 import { useParams } from "react-router-dom";
-import { ShopContext } from "../context/ShopContext";
 import { Star } from "lucide-react";
+import { ShopContext } from "../context/ShopContext";
+import DisplayProducts from "../components/DisplayProducts";
 
 const Product = () => {
   const { productId } = useParams();
@@ -10,25 +11,35 @@ const Product = () => {
   const [size, setSize] = useState("");
 
   const productData = products?.find((item) => item._id === productId);
-  const displayImage = productData?.image?.includes(productImage)
-    ? productImage
-    : productData?.image?.[0];
+
   if (!products?.length)
     return <div className="text-center py-10">Loading...</div>;
   if (!productData)
     return <div className="text-center py-10">Product not Found</div>;
+
+  const displayImage = productImage || productData.image?.[0];
+
+  const relatedProducts = products
+    .filter(
+      (item) =>
+        productData.category === item.category &&
+        productData.subCategory === item.subCategory &&
+        item._id !== productId,
+    )
+    .slice(0, 5);
+
   return (
-    <section className="border-t border-gray-400 py-10 transition-opacity ease-in duration-500 opacity-100 text-gray-500">
+    <section className="border-t border-gray-400 py-10 text-gray-500">
       <div className="flex flex-col sm:flex-row gap-10 sm:gap-10">
         <div className="flex-1 flex flex-col-reverse sm:flex-row gap-4">
-          <div className="flex sm:flex-col overflow-x-auto sm:overflow-y-scroll justify-between sm:justify-normal sm:w-[18.7%] w-full [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="flex sm:flex-col overflow-x-auto sm:overflow-y-scroll justify-between sm:w-[18.7%] w-full h-full object-cover [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {productData.image.map((item, index) => (
               <img
                 src={item}
                 key={`${item}-${index}`}
                 onClick={() => setProductImage(item)}
                 alt={productData.name}
-                className={`w-[24%] sm:w-full sm:mb-4 shrink-0 cursor-pointer ${displayImage === item ? "border-4 border-gray-400" : "border-none"}`}
+                className={`w-[24%] sm:w-full shrink-0 cursor-pointer ${displayImage === item ? "border-4 border-gray-400" : "border-transparent"}`}
               />
             ))}
           </div>
@@ -36,12 +47,12 @@ const Product = () => {
             <img
               src={displayImage}
               alt={productData.name}
-              className="w-full h-auto"
+              className="w-full h-full object-cover"
             />
           </div>
         </div>
         <div className="flex-1">
-          <h1 className="font-medium text-2xl mt-2 text-gray-700">
+          <h1 className="font-medium text-2xl text-gray-700">
             {productData.name}
           </h1>
           <div className="flex items-center gap-1 mt-1">
@@ -64,7 +75,7 @@ const Product = () => {
                 <button
                   key={`${item}-${index}`}
                   onClick={() => setSize(item)}
-                  className={`border px-4 py-2 ${item === size ? "border-gray-400" : "border-none"}`}
+                  className={`border px-4 py-2 ${item === size ? "border-gray-400" : "border-transparent"}`}
                 >
                   {item}
                 </button>
@@ -126,6 +137,13 @@ const Product = () => {
           </p>
         </div>
       </div>
+      {relatedProducts.length ? (
+        <DisplayProducts
+          titleFirst="RELATED"
+          titleSecond="PRODUCTS"
+          products={relatedProducts}
+        />
+      ) : null}
     </section>
   );
 };

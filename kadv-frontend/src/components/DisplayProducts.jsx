@@ -9,6 +9,8 @@ const DisplayProducts = ({
   description,
   products,
 }) => {
+  const isEmpty = !products?.length;
+
   return (
     <section className="my-10">
       <div className="text-center py-5 text-2xl sm:text-4xl">
@@ -19,17 +21,26 @@ const DisplayProducts = ({
           </p>
         )}
       </div>
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8 gap-y-5">
-        {products.map(({ _id, image, name, price }) => (
-          <ProductItem
-            key={_id}
-            id={_id}
-            image={image}
-            name={name}
-            price={price}
-          />
-        ))}
-      </div>
+      {isEmpty ? (
+        <div className="text-center py-10 text-gray-500">
+          <p className="text-lg font-medium">No products found</p>
+          <p className="text-sm mt-2">
+            Try adjusting filters or check back later
+          </p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8 gap-y-5">
+          {products.map(({ _id, image, name, price }) => (
+            <ProductItem
+              key={_id}
+              id={_id}
+              image={image}
+              name={name}
+              price={price}
+            />
+          ))}
+        </div>
+      )}
     </section>
   );
 };

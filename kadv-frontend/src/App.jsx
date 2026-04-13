@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useParams } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Collection from "./pages/Collection";
@@ -12,11 +12,13 @@ import PlaceOrder from "./pages/PlaceOrder";
 import Orders from "./pages/Orders";
 import Footer from "./components/Footer";
 import SearchBar from "./components/SearchBar";
+import ScrollToTop from "./components/ScrollToTop";
 
 const App = () => {
   return (
     <div className="min-h-screen flex flex-col px-5 sm:px-8 md:px-12 lg:px-16">
       <Navbar />
+      <ScrollToTop />
       <main className="flex-1">
         <SearchBar />
         <Routes>
@@ -24,7 +26,7 @@ const App = () => {
           <Route path="/collection" element={<Collection />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
-          <Route path="/product/:productId" element={<Product />} />
+          <Route path="/product/:productId" element={<ProductPage />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/login" element={<Login />} />
           <Route path="/profile" element={<Profile />} />
@@ -38,3 +40,8 @@ const App = () => {
 };
 
 export default App;
+
+const ProductPage = () => {
+  const { productId } = useParams();
+  return <Product key={productId} />;
+};

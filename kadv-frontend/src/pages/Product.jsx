@@ -7,7 +7,7 @@ import DisplayProducts from "../components/DisplayProducts";
 const Product = () => {
   const { productId } = useParams();
   const { products, formatPrice } = useContext(ShopContext);
-  const [productImage, setProductImage] = useState(null);
+  const [imageIndex, setImageIndex] = useState(0);
   const [size, setSize] = useState("");
 
   const productData = products?.find((item) => item._id === productId);
@@ -17,7 +17,8 @@ const Product = () => {
   if (!productData)
     return <div className="text-center py-10">Product not Found</div>;
 
-  const displayImage = productImage || productData.image?.[0];
+  const displayImage =
+    productData.image?.[imageIndex] ?? productData.image?.[0];
 
   const relatedProducts = products
     .filter(
@@ -37,9 +38,9 @@ const Product = () => {
               <img
                 src={item}
                 key={`${item}-${index}`}
-                onClick={() => setProductImage(item)}
+                onClick={() => setImageIndex(index)}
                 alt={productData.name}
-                className={`w-[24%] sm:w-full shrink-0 cursor-pointer ${displayImage === item ? "border-4 border-gray-400" : "border-transparent"}`}
+                className={`w-[24%] sm:w-full shrink-0 cursor-pointer ${index === imageIndex ? "border-4 border-gray-400" : "border-transparent"}`}
               />
             ))}
           </div>

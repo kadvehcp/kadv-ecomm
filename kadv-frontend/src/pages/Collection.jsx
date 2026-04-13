@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ShopContext } from "../context/ShopContext";
 import { X, ListFilter } from "lucide-react";
 import DisplayProducts from "../components/DisplayProducts";
@@ -9,6 +9,16 @@ const Collection = () => {
   const [sortType, setSortType] = useState("Relevant");
   const [filters, setFilters] = useState({ category: [], subCategory: [] });
   const [tempFilters, setTempFilters] = useState(filters);
+
+  useEffect(() => {
+    if (!showFilter) return;
+    document.body.style.overflow = "clip";
+    return () => {
+      document.body.style.removeProperty("overflow");
+      if (!document.body.getAttribute("style")?.trim())
+        document.body.removeAttribute("style");
+    };
+  }, [showFilter]);
 
   const applyFilter = (filterType) => (event) => {
     setTempFilters((prev) => ({
@@ -40,7 +50,7 @@ const Collection = () => {
       const matchSubCategory =
         filters.subCategory.length === 0 ||
         filters.subCategory.includes(item.subCategory);
-      const searchQuery = search.toLowerCase().trim();
+      const searchQuery = search?.toLowerCase().trim();
       const matchSearch =
         !search ||
         !showSearch ||

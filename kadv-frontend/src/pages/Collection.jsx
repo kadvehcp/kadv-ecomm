@@ -4,7 +4,8 @@ import { X, ListFilter } from "lucide-react";
 import DisplayProducts from "../components/DisplayProducts";
 
 const Collection = () => {
-  const { products, search, showSearch } = useContext(ShopContext);
+  const { products, searchValue } = useContext(ShopContext);
+  const searchQuery = searchValue?.toLowerCase().trim();
   const [showFilter, setShowFilter] = useState(false);
   const [sortType, setSortType] = useState("Relevant");
   const [filters, setFilters] = useState({ category: [], subCategory: [] });
@@ -50,10 +51,8 @@ const Collection = () => {
       const matchSubCategory =
         filters.subCategory.length === 0 ||
         filters.subCategory.includes(item.subCategory);
-      const searchQuery = search?.toLowerCase().trim();
       const matchSearch =
-        !search ||
-        !showSearch ||
+        !searchQuery ||
         item.price.toString().includes(searchQuery) ||
         item.name.toLowerCase().includes(searchQuery);
 

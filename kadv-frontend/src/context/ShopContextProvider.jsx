@@ -3,7 +3,7 @@ import { products } from "../assets/assets";
 import { ShopContext } from "./ShopContext";
 
 const ShopContextProvider = ({ children }) => {
-  const [search, setSearch] = useState("");
+  const [searchValue, setSearchValue] = useState("");
   const [showSearch, setShowSearch] = useState(false);
 
   const formatter = new Intl.NumberFormat("en-US", {
@@ -17,8 +17,8 @@ const ShopContextProvider = ({ children }) => {
         products,
         formatPrice,
         deliveryFee: 10,
-        search,
-        setSearch,
+        searchValue,
+        setSearchValue,
         showSearch,
         setShowSearch,
       }}

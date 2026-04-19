@@ -1,9 +1,12 @@
 import { useContext } from "react";
 import { ShopContext } from "../context/ShopContext";
 import { Search, X } from "lucide-react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const SearchBar = () => {
-  const { search, setSearch, showSearch, setShowSearch } =
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { searchValue, setSearchValue, showSearch, setShowSearch } =
     useContext(ShopContext);
 
   return showSearch ? (
@@ -13,14 +16,24 @@ const SearchBar = () => {
           type="text"
           name="search"
           id="search"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          value={searchValue}
+          onChange={(e) => {
+            const searchingValue = e.target.value;
+            setSearchValue(searchingValue);
+            if (searchingValue.trim() && location.pathname !== "/collection") {
+              navigate("/collection", { state: { from: location.pathname } });
+            }
+          }}
           className="flex-1 outline-none bg-inherit text-sm"
         />
         <Search className="cursor-pointer" />
       </div>
       <X
-        onClick={() => setShowSearch(false)}
+        onClick={() => {
+          setShowSearch(false);
+          setSearchValue("");
+          if (location.state?.from) navigate(location.state.from);
+        }}
         className="inline cursor-pointer"
       />
     </section>

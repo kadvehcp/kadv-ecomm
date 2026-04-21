@@ -1,4 +1,5 @@
 import { Routes, Route, useParams } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Collection from "./pages/Collection";
@@ -17,6 +18,7 @@ import ScrollToTop from "./components/ScrollToTop";
 const App = () => {
   return (
     <div className="min-h-screen flex flex-col px-5 sm:px-8 md:px-12 lg:px-16">
+      <ToastContainer />
       <Navbar />
       <ScrollToTop />
       <main className="flex-1">

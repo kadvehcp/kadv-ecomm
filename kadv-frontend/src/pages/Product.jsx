@@ -6,13 +6,13 @@ import DisplayProducts from "../components/DisplayProducts";
 
 const Product = () => {
   const { productId } = useParams();
-  const { products, formatPrice } = useContext(ShopContext);
+  const { products, formatPrice, addToCart } = useContext(ShopContext);
   const [imageIndex, setImageIndex] = useState(0);
-  const [size, setSize] = useState("");
+  const [productSize, setProductSize] = useState("");
 
   const productData = products?.find((item) => item._id === productId);
 
-  if (!products?.length)
+  if (!products || !products.length)
     return <div className="text-center py-10">Loading...</div>;
   if (!productData)
     return <div className="text-center py-10">Product not Found</div>;
@@ -34,7 +34,7 @@ const Product = () => {
       <div className="flex flex-col sm:flex-row gap-10 sm:gap-10">
         <div className="flex-1 flex flex-col-reverse sm:flex-row gap-4">
           <div className="flex sm:flex-col overflow-x-auto sm:overflow-y-scroll justify-between sm:w-[18.7%] w-full h-full object-cover [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            {productData.image.map((item, index) => (
+            {productData.image?.map((item, index) => (
               <img
                 src={item}
                 key={`${item}-${index}`}
@@ -72,11 +72,11 @@ const Product = () => {
           <div className="flex flex-col gap-4 my-8">
             <span className="font-medium text-gray-700">Select size:</span>
             <div className="flex gap-2">
-              {productData.sizes.map((item, index) => (
+              {productData.sizes?.map((item, index) => (
                 <button
                   key={`${item}-${index}`}
-                  onClick={() => setSize(item)}
-                  className={`border px-4 py-2 ${item === size ? "border-gray-400" : "border-transparent"}`}
+                  onClick={() => setProductSize(item)}
+                  className={`border px-4 py-2 ${item === productSize ? "border-gray-400" : "border-transparent"}`}
                 >
                   {item}
                 </button>
@@ -84,8 +84,9 @@ const Product = () => {
             </div>
           </div>
           <button
-            disabled={!size}
-            className={`px-7 py-4 text-sm border border-gray-400 rounded-xl font-medium ${size ? "text-gray-700 active:bg-gray-400" : "cursor-not-allowed"}`}
+            disabled={!productSize}
+            onClick={() => addToCart(productData._id, productSize)}
+            className={`px-7 py-4 text-sm border border-gray-400 rounded-xl font-medium ${productSize ? "text-gray-700 active:bg-gray-400" : "cursor-not-allowed"}`}
           >
             ADD TO CART
           </button>

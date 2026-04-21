@@ -12,13 +12,7 @@ const Collection = () => {
   const [tempFilters, setTempFilters] = useState(filters);
 
   useEffect(() => {
-    if (!showFilter) return;
-    document.body.style.overflow = "clip";
-    return () => {
-      document.body.style.removeProperty("overflow");
-      if (!document.body.getAttribute("style")?.trim())
-        document.body.removeAttribute("style");
-    };
+    document.body.style.overflow = showFilter ? "hidden" : "";
   }, [showFilter]);
 
   const applyFilter = (filterType) => (event) => {

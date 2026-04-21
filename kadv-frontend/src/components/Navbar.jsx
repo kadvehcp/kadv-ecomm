@@ -22,12 +22,14 @@ const USER_MENU_ITEMS = [
 ];
 
 const Navbar = () => {
-  const { setShowSearch } = useContext(ShopContext);
+  const { setShowSearch, getCartCount } = useContext(ShopContext);
 
   const [userMenuVisible, setUserMenuVisible] = useState(false);
   const [mobileMenuVisible, setMobileMenuVisible] = useState(false);
 
   const userMenuRef = useRef(null);
+
+  const cartCount = getCartCount();
 
   useEffect(() => {
     if (!userMenuVisible) return;
@@ -41,13 +43,7 @@ const Navbar = () => {
   }, [userMenuVisible]);
 
   useEffect(() => {
-    if (!mobileMenuVisible) return;
-    document.body.style.overflow = "clip";
-    return () => {
-      document.body.style.removeProperty("overflow");
-      if (!document.body.getAttribute("style")?.trim())
-        document.body.removeAttribute("style");
-    };
+    document.body.style.overflow = mobileMenuVisible ? "hidden" : "";
   }, [mobileMenuVisible]);
 
   return (
@@ -94,9 +90,11 @@ const Navbar = () => {
 
         <Link to="/cart" className="relative">
           <ShoppingCart />
-          <span className="absolute -right-1.5 -bottom-1.5 w-4 aspect-square rounded-full leading-4 text-center bg-black text-white text-[7px]">
-            77
-          </span>
+          {cartCount > 0 && (
+            <span className="absolute -right-1.5 -bottom-1.5 w-4 aspect-square rounded-full leading-4 text-center bg-black text-white text-[7px]">
+              {cartCount}
+            </span>
+          )}
         </Link>
 
         <Menu

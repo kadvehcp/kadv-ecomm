@@ -22,14 +22,12 @@ const USER_MENU_ITEMS = [
 ];
 
 const Navbar = () => {
-  const { setShowSearch, getCartCount } = useContext(ShopContext);
+  const { setShowSearch, cartCount } = useContext(ShopContext);
 
   const [userMenuVisible, setUserMenuVisible] = useState(false);
   const [mobileMenuVisible, setMobileMenuVisible] = useState(false);
 
   const userMenuRef = useRef(null);
-
-  const cartCount = getCartCount();
 
   useEffect(() => {
     if (!userMenuVisible) return;

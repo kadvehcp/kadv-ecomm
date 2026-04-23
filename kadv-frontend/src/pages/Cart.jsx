@@ -4,21 +4,9 @@ import { ShopContext } from "../context/ShopContext";
 import { Title } from "../components/DisplayProducts";
 
 const Cart = () => {
-  const { products, formatPrice, cartItems, updateItemQuantity } =
+  const { formatPrice, cartEntries, updateItemQuantity, productMap } =
     useContext(ShopContext);
-  const cartData = [];
-
-  for (const itemId in cartItems) {
-    for (const itemSize in cartItems[itemId]) {
-      if (cartItems[itemId][itemSize] > 0) {
-        cartData.push({
-          _id: itemId,
-          size: itemSize,
-          quantity: cartItems[itemId][itemSize],
-        });
-      }
-    }
-  }
+  const cartData = cartEntries;
 
   const hasItems = cartData.length > 0;
 
@@ -30,47 +18,16 @@ const Cart = () => {
       <div>
         {hasItems ? (
           cartData.map((item) => {
-            const productData = products.find(
-              (product) => product._id === item._id,
-            );
+            const productData = productMap[item.itemId];
+            if (!productData) return null;
             return (
-              productData && (
-                <div
-                  key={item._id + item.size}
-                  className="py-5 border-t border-gray-400 grid grid-cols-[4fr_0.5fr_0.5fr] items-center gap-5"
-                >
-                  <div className="flex items-start gap-5">
-                    <img
-                      src={productData.image[0]}
-                      alt={`${productData.name} image`}
-                      className="w-20 sm:w-28"
-                    />
-                    <div>
-                      <h3 className="text-sm sm:text-lg font-medium text-gray-700">
-                        {productData.name}
-                      </h3>
-                      <div className="flex items-center gap-5 mt-2">
-                        <h4>{formatPrice(productData.price)}</h4>
-                        <h4>{item.size}</h4>
-                      </div>
-                    </div>
-                  </div>
-                  <input
-                    type="number"
-                    min={1}
-                    value={item.quantity}
-                    onChange={(e) => {
-                      const value = Math.max(1, Number(e.target.value) || 1);
-                      updateItemQuantity(item._id, item.size, value);
-                    }}
-                    className="border border-gray-400 max-w-16 sm:max-w-28 px-5 py-2"
-                  />
-                  <Trash2
-                    onClick={() => updateItemQuantity(item._id, item.size, 0)}
-                    className="w-4 m-2 sm:m-5 sm:w-7 cursor-pointer"
-                  />
-                </div>
-              )
+              <CartItem
+                key={`${item.itemId}-${item.itemSize}`}
+                item={item}
+                productData={productData}
+                updateItemQuantity={updateItemQuantity}
+                formatPrice={formatPrice}
+              />
             );
           })
         ) : (
@@ -85,3 +42,49 @@ const Cart = () => {
 };
 
 export default Cart;
+
+const CartItem = ({ item, productData, updateItemQuantity, formatPrice }) => {
+  return (
+    <div className="py-5 border-t border-gray-400 grid grid-cols-[4fr_0.5fr_0.5fr] items-center gap-5">
+      <div className="flex items-start gap-5">
+        <img
+          src={productData.image[0]}
+          alt={`${productData.name} image`}
+          className="w-20 sm:w-28"
+        />
+        <div>
+          <h3 className="text-sm sm:text-lg font-medium text-gray-700">
+            {productData.name}
+          </h3>
+          <div className="flex items-center gap-5 mt-2">
+            <h4>{formatPrice(productData.price)}</h4>
+            <h4>{item.itemSize}</h4>
+          </div>
+        </div>
+      </div>
+      <input
+        name="updateItemQuantity"
+        type="number"
+        min={1}
+        defaultValue={item.quantity}
+        onBlur={(e) => {
+          const userInput = Number(e.target.value);
+          const value =
+            Number.isNaN(userInput) || userInput < 1
+              ? item.quantity
+              : userInput;
+          updateItemQuantity(item.itemId, item.itemSize, value);
+        }}
+        className="border border-gray-400 max-w-16 sm:max-w-28 px-5 py-2"
+      />
+      <button
+        onClick={() => updateItemQuantity(item.itemId, item.itemSize, 0)}
+        className="flex items-center justify-center p-4"
+      >
+        <Trash2 className="cursor-pointer" />
+      </button>
+    </div>
+  );
+};
+
+const CartTotal = () => {};

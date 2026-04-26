@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useRef } from "react";
 import { Trash2 } from "lucide-react";
 import { ShopContext } from "../context/ShopContext";
 import { Title } from "../components/DisplayProducts";
@@ -37,6 +37,11 @@ const Cart = () => {
           </div>
         )}
       </div>
+      <div className="flex justify-end my-20">
+        <div className="w-full sm:max-w-md">
+          <CartTotal />
+        </div>
+      </div>
     </section>
   );
 };
@@ -44,8 +49,9 @@ const Cart = () => {
 export default Cart;
 
 const CartItem = ({ item, productData, updateItemQuantity, formatPrice }) => {
+  const inputRef = useRef();
   return (
-    <div className="py-5 border-t border-gray-400 grid grid-cols-[4fr_0.5fr_0.5fr] items-center gap-5">
+    <div className="py-5 border-t border-gray-400 grid grid-cols-[4fr_0.5fr_0.5fr] items-center justify-center gap-5">
       <div className="flex items-start gap-5">
         <img
           src={productData.image[0]}
@@ -62,21 +68,29 @@ const CartItem = ({ item, productData, updateItemQuantity, formatPrice }) => {
           </div>
         </div>
       </div>
-      <input
-        name="updateItemQuantity"
-        type="number"
-        min={1}
-        defaultValue={item.quantity}
-        onBlur={(e) => {
-          const userInput = Number(e.target.value);
-          const value =
-            Number.isNaN(userInput) || userInput < 1
-              ? item.quantity
-              : userInput;
-          updateItemQuantity(item.itemId, item.itemSize, value);
-        }}
-        className="border border-gray-400 max-w-16 sm:max-w-28 px-5 py-2"
-      />
+      <div className="flex flex-col gap-2">
+        <input
+          ref={inputRef}
+          name="updateItemQuantity"
+          type="number"
+          min={1}
+          defaultValue={item.quantity}
+          className="text-center border border-gray-400 max-w-14 sm:max-w-20 px-2.5 py-2"
+        />
+        <button
+          onClick={() => {
+            const value = Number(inputRef.current.value.trim());
+            if (Number.isNaN(value) || value < 1) {
+              inputRef.current.value = item.quantity;
+              return;
+            }
+            updateItemQuantity(item.itemId, item.itemSize, value);
+          }}
+          className="border border-gray-400 max-w-14 sm:max-w-20 px-2.5 py-2"
+        >
+          Set
+        </button>
+      </div>
       <button
         onClick={() => updateItemQuantity(item.itemId, item.itemSize, 0)}
         className="flex items-center justify-center p-4"
@@ -87,4 +101,33 @@ const CartItem = ({ item, productData, updateItemQuantity, formatPrice }) => {
   );
 };
 
-const CartTotal = () => {};
+const CartTotal = () => {
+  const { formatPrice, deliveryFee, cartAmount } = useContext(ShopContext);
+  return (
+    <section className="w-full">
+      <div className="text-2xl">
+        <Title firstText="CART" secondText="TOTAL" />
+      </div>
+      <div className="flex flex-col mt-5 gap-4 text-sm">
+        <div className="flex justify-between border-b border-gray-400 py-2">
+          <h4>Sub Total</h4>
+          <h5>{formatPrice(cartAmount)}</h5>
+        </div>
+
+        <div className="flex justify-between border-b border-gray-400 py-2">
+          <h4>Shipping Fee</h4>
+          <h5>+ {formatPrice(deliveryFee)}</h5>
+        </div>
+
+        <div className="flex justify-between border-b border-gray-400 py-2">
+          <h4 className="text-base font-medium">TOTAL PRICE</h4>
+          <h5 className="text-base font-medium">
+            {cartAmount > 0
+              ? formatPrice(cartAmount + deliveryFee)
+              : formatPrice(0)}
+          </h5>
+        </div>
+      </div>
+    </section>
+  );
+};

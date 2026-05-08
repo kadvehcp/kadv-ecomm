@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef, useContext } from "react";
 import { Link, NavLink } from "react-router-dom";
+import { toast } from "react-toastify";
 import { Atom, Menu, Search, ShoppingCart, User, X } from "lucide-react";
 import { ShopContext } from "../context/ShopContext";
 
@@ -16,7 +17,7 @@ const USER_MENU_ITEMS = [
   {
     name: "Logout",
     action: () => {
-      alert("User logged out");
+      toast.success("User logged out");
     },
   },
 ];
@@ -41,7 +42,8 @@ const Navbar = () => {
   }, [userMenuVisible]);
 
   useEffect(() => {
-    document.body.style.overflow = mobileMenuVisible ? "hidden" : "";
+    if (mobileMenuVisible) document.body.style.overflow = "hidden";
+    return () => (document.body.style.overflow = "");
   }, [mobileMenuVisible]);
 
   return (
@@ -65,7 +67,7 @@ const Navbar = () => {
       </nav>
       <div className="flex items-center gap-5">
         <Search
-          onClick={() => setShowSearch((prev) => !prev)}
+          onClick={() => setShowSearch(true)}
           className="cursor-pointer"
         />
 
@@ -90,7 +92,7 @@ const Navbar = () => {
           <ShoppingCart />
           {cartCount > 0 && (
             <span className="absolute -right-1.5 -bottom-1.5 w-4 aspect-square rounded-full leading-4 text-center bg-black text-white text-[7px]">
-              {cartCount}
+              {cartCount > 99 ? "99+" : cartCount}
             </span>
           )}
         </Link>
@@ -116,7 +118,7 @@ const Logo = ({ Icon, heading, onClick }) => {
   return (
     <Link to="/" onClick={onClick} className="flex gap-2 text-xl items-center">
       {Icon && <Icon />}
-      <h1>{heading}</h1>
+      <span>{heading}</span>
     </Link>
   );
 };

@@ -12,7 +12,8 @@ const Collection = () => {
   const [tempFilters, setTempFilters] = useState(filters);
 
   useEffect(() => {
-    document.body.style.overflow = showFilter ? "hidden" : "";
+    if (showFilter) document.body.style.overflow = "hidden";
+    return () => (document.body.style.overflow = "");
   }, [showFilter]);
 
   const applyFilter = (filterType) => (event) => {

@@ -1,5 +1,6 @@
 import { useContext, useState } from "react";
 import { Atom, Laptop, Sun } from "lucide-react";
+import { toast } from "react-toastify";
 import { ShopContext } from "../context/ShopContext";
 import { placeHolderImage } from "../assets/assets";
 import DisplayProducts, { Title } from "../components/DisplayProducts";
@@ -24,10 +25,9 @@ const OUR_POLICIES = [
 
 const Home = () => {
   const { products } = useContext(ShopContext);
-  const latestProducts = products.slice(0, 10);
-  const bestSellerProducts = products
-    .filter((item) => item.bestseller)
-    .slice(0, 10);
+  const latestProducts = products?.slice(0, 10) || [];
+  const bestSellerProducts =
+    products?.filter((item) => item.bestseller).slice(0, 10) || [];
 
   const productSections = [
     {
@@ -102,7 +102,7 @@ const NewsLetterBox = () => {
   const [email, setEmail] = useState("");
   const onSubmitHandler = (event) => {
     event.preventDefault();
-    console.log(`Form Submitted Successfully with email id: ${email}`);
+    toast.success(`Subscribed: ${email}`);
     setEmail("");
   };
   return (
@@ -129,7 +129,7 @@ const NewsLetterBox = () => {
         />
         <button
           type="submit"
-          disabled={!email}
+          disabled={!email.trim()}
           className="text-xs font-bold px-10 py-4 text-black bg-gray-400"
         >
           SUBSCRIBE

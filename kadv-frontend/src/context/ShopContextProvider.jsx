@@ -34,8 +34,10 @@ const ShopContextProvider = ({ children }) => {
 
   const updateItemQuantity = (itemId, itemSize, quantity) => {
     setCartItems((prev) => {
+      quantity = Math.floor(quantity);
+      if (Number.isNaN(quantity) || quantity <= 0) quantity = 0;
       if (!prev[itemId]) return prev;
-      const currentQuantity = prev[itemId]?.[itemSize] || 0;
+      const currentQuantity = prev[itemId][itemSize] || 0;
       if (currentQuantity === quantity) return prev;
 
       const nextCart = { ...prev };
